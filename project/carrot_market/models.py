@@ -7,10 +7,10 @@ class User(models.Model):
     location = models.CharField(max_length=100, null=True)
 
 class Post(models.Model):
-    product_id = models.IntegerField(max_length=50) 
+    product_id = models.IntegerField() 
     user_id = models.CharField(max_length=50)
     title = models.CharField(max_length=50)
-    price = models.IntegerField(max_length=50) 
+    price = models.IntegerField() 
     product_description = models.TextField()
     deal_location = models.CharField(max_length=100)
     product_img = models.ImageField(upload_to='product_img/')
@@ -19,5 +19,5 @@ class Post(models.Model):
 
 class Chat(models.Model):
     user_id = models.CharField(max_length=50)
-    product_id = models.IntegerField(max_length=50)
+    product_id = models.IntegerField()
     chatting = models.TextField(null=True)
