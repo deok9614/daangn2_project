@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "carrot_market",
+    'django.contrib.humanize', # pip install django-humanize
+
 ]
 
 MIDDLEWARE = [
@@ -85,7 +87,6 @@ DATABASES = {
         "PORT": "5432",
     }
 }
-
 
 
 # Password validation
