@@ -28,8 +28,10 @@ def register(request):
 
 def chat(request):
     pass
+
 def location(request):
-    pass
+    return render(request, 'dangun_app/location.html') 
+
 def trade(request):
     pass
 def trade_post(request):
