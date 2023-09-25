@@ -21,3 +21,8 @@ class Chat(models.Model):
     user_id = models.CharField(max_length=50)
     product_id = models.IntegerField()
     chatting = models.TextField(null=True)
+
+class Article(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
