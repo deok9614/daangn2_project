@@ -27,7 +27,7 @@ def register(request):
     return render(request,'registration/register.html')
 
 def chat(request):
-    pass
+    return render(request, 'dangun_app/chat.html')
 
 def location(request):
     return render(request, 'dangun_app/location.html') 
