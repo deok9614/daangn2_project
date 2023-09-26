@@ -27,7 +27,7 @@
                 <div class="flex-box">
                   <label class="img-upload">
                     {% if post %}
-                        <img src="{{ post.product_img.url }}" alt="이미지 설명" class="image-box">
+                        <img src="{{ post.product_img.url }}" alt="이미지 설명" class="image-box" id="image-box">
                     {% else %}
                         <img src="{% static 'img/icon_photo.png' %}" alt="이미지 설명" class="image-box">
                     {% endif %}
@@ -45,7 +45,7 @@
                 <div class="full-box">
                   <label for="product_description" class="block-box">물품 설명</label>
                   <textarea name="product_description" required="required">
-                    {% if post %}{{ post.product_description }}
+                    {% if post %}{{ post.product_description|striptags }}
                     {% endif %}
                   </textarea>
 

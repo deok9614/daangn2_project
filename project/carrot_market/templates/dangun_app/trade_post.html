@@ -27,12 +27,21 @@
                 <p>{{ post.deal_location }}</p>
               </div>
               {% if request.user_id.username == post.user_id.username %}
+                {% if post.product_sold == 'Y' %}
+                <div class="flex-box button-box">
+                  <div class="button-box">
+                      <button class="grey">판매완료</button>
+                    </a>
+                  </div>
+                </div>
+                {% else %}
                 <div class="flex-box button-box">
                   <a href="{% url 'dangun_app:edit' post.product_id %}">
                     <button class="grey">수정하기</button>
                   </a>
                   <button class="orange">채팅보기</button>
                 </div>
+                {% endif %}
               {% else %}
                 <div class="button-box">
                   <a href="{% url 'dangun_app:chat' %}">
