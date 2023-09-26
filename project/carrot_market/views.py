@@ -6,6 +6,7 @@ from .models import Post, User
 from .forms import PostForm
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 def login(request):
     if request.method == 'POST':
@@ -32,10 +33,14 @@ def chat(request):
 def location(request):
     return render(request, 'dangun_app/location.html') 
 
+def search(request):
+    return render(request, 'dangun_app/trade.html')
+
 def trade(request):
-    pass
+    return render(request, 'dangun_app/trade.html')
+
 def trade_post(request, product_id=None):
-    post = get_object_or_404(Post, product_id=product_id)
+    post = get_object_or_404(Post, pk=product_id)
 
     # 조회수 증가
     if request.user.is_authenticated:
@@ -45,33 +50,20 @@ def trade_post(request, product_id=None):
     else:
         post.views += 1
         post.save()
-
     try:
         user_profile = User.objects.get(user_id=post.user_id)
     except User.DoesNotExist:
             user_profile = None
-
     context = {
         'post': post,
         'user_profile': user_profile,
     }
-
     return render(request, 'dangun_app/trade_post.html', context)
 
 # @login_required
-def write(request, product_id=None):
-    # 수정
-    if product_id:
-        post = get_object_or_404(Post, id=product_id)
-        
-    # 폼을 초기화함
-        if request.method == "POST":
-            form = PostForm(request.POST, request.FILES, instance=post)
-        else:
-            form = PostForm(instance=post)
-    else:
-        post = None
-        form = PostForm(request.POST, request.FILES)
+def write(request, product_id = None):
+    post = None
+    form = PostForm(request.POST, request.FILES)
     if request.method == "POST":
         print(form.errors)
         if form.is_valid():
@@ -84,7 +76,47 @@ def write(request, product_id=None):
     context = {'form': form}
     return render(request,'dangun_app/write.html' , context)
 
+def edit(request, product_id):
+    post = get_object_or_404(Post, product_id=product_id)
+    if product_id:
+        post.product_description = post.product_description.strip()
+        if request.method == "POST":
+            post.title = request.POST['title']
+            post.price = request.POST['price']
+            post.product_description = request.POST['product_description']
+            post.deal_location = request.POST['deal_location']
+            if 'product_img' in request.FILES:
+                post.product_img = request.FILES['product_img']
+            post.save()
+            return redirect('dangun_app:trade_post', product_id=product_id)
+        return render(request,'dangun_app/write.html' , {'post':post})
 
 
 def main(request):
     return render(request, 'dangun_app/main.html')
+
+
+# test 중 - 신지수
+# @login_required
+# def write(request, product_id=None):
+#     if request.method == "POST":
+        # if form.is_valid():
+        #     # 아이디 생성 시 주석 제거
+        #     # post.user_id = request.user.username
+        #     post = form.save()
+        #     product_id = post.product_id
+        #     return redirect('dangun_app:trade_post', product_id=product_id)
+#         else:
+#             try:
+#                 user_profile = User.objects.get(user_id=request.user.username)
+#                 if user_profile.location:
+#                     form = PostForm()
+#                 else:
+#                     messages.error(request, '동네인증이 필요합니다.')
+#                     return redirect('dangun_app:alert', alert_message='동네인증이 필요합니다.')
+#             except User.DoesNotExist:
+#                 messages.error(request, '동네인증이 필요합니다.')
+#                 return redirect('dangun_app:alert', alert_message='동네인증이 필요합니다.')
+    
+#     context = {'form': form}
+#     return render(request, 'dangun_app/write.html', context)
