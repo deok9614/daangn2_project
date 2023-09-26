@@ -1,6 +1,9 @@
 {% comment %} {% load custom_filter%} {% endcomment %}
 {% load static%}
 {% load humanize %}
+{% comment %} {% load custom_filter%} {% endcomment %}
+{% load static%}
+{% load humanize %}
 <!DOCTYPE html>
 <html>
 
@@ -21,8 +24,7 @@
         {% block content %}
           <div class="about-trade">
             <div class="container">
-              {% comment %} <form class="write-box" method="POST" enctype="multipart/form-data"> {% endcomment %}
-              <form class="write-box" method="POST" action="{% if post %}{% url 'dangun_app:edit' post.id %}{% else %}{% url 'dangun_app:write' %}{% endif %}" enctype="multipart/form-data">
+              <form class="write-box" method="POST" action="{% if post %}{% url 'dangun_app:edit' post.product_id %}{% else %}{% url 'dangun_app:write' %}{% endif %}" enctype="multipart/form-data">
 
                 {% csrf_token %}
                 <div class="flex-box">

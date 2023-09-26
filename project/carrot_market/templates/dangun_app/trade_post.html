@@ -28,7 +28,11 @@
               </div>
               {% if request.user_id.username == post.user_id.username %}
                 <div class="flex-box button-box">
+<<<<<<< HEAD
                   {% comment %} <a href="{% url 'dangun_app:edit' post.id %}"> {% endcomment %}
+=======
+                  <a href="{% url 'dangun_app:edit' post.product_id %}">
+>>>>>>> template
                     <button class="grey">수정하기</button>
                   </a>
                   <button class="orange">채팅보기</button>
