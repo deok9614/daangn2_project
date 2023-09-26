@@ -1,3 +1,4 @@
+from datetime import timedelta, datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
@@ -37,19 +38,23 @@ def search(request):
     return render(request, 'dangun_app/trade.html')
 
 def trade(request):
-    return render(request, 'dangun_app/trade.html')
+    top_views_posts = Post.objects.filter(product_sold='N').order_by('-views')
+    return render(request, 'dangun_app/trade.html', {'posts': top_views_posts})
 
 def trade_post(request, product_id=None):
     post = get_object_or_404(Post, pk=product_id)
 
-    # 조회수 증가
-    if request.user.is_authenticated:
-        if request.user != post.user:
-            post.views += 1
-            post.save()
-    else:
+    # 쿠키 데이터를 이용 - 새로고침 시 조회수 늘어나지 않음
+    cookie_name = f'main_{product_id}_viewed'
+    if cookie_name not in request.COOKIES:
         post.views += 1
         post.save()
+        # 조회수 증가 막는 기간 : 하루
+        expires = datetime.now() + timedelta(days=1)
+        expires = expires.strftime('%a, %d-%b-%Y %H:%M:%S GMT')
+        response = render(request, 'dangun_app/trade_post.html', {'post': post})
+        response.set_cookie(cookie_name, 'true', expires=expires)
+        return response
     try:
         user_profile = User.objects.get(user_id=post.user_id)
     except User.DoesNotExist:
