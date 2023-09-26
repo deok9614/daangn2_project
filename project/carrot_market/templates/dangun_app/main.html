@@ -20,10 +20,12 @@
           <h1>당신 근처의<br>지역 생활 커뮤니티</h1>
           <h4>동네라서 가능한 모든것<br>당근에서 가까운 이웃과 함께해요.</h4>
           <div class="flex-box gap16">
+            <a href="https://play.google.com/store/apps/details?id=com.towneers.www&pli=1" style="text-decoration: none;">
             <button class="flex-box gap8">
-              <img src="{% static 'img/icon_googleplay.png' %}" alt=""/>Google Play</button>
+              <img src="{% static 'img/icon_googleplay.png' %}" alt=""/>Google Play</button></a>
+            <a href="https://apps.apple.com/kr/app/%EB%8B%B9%EA%B7%BC%EB%A7%88%EC%BC%93/id1018769995" style="text-decoration: none;">
             <button class="flex-box gap8">
-              <img src="{% static 'img/icon_appstore.png' %}" alt=""/>App Store</button>
+              <img src="{% static 'img/icon_appstore.png' %}" alt=""/>App Store</button></a>
           </div>
         </div>
         <img src="{% static 'img/character.png' %}" alt=""/>
@@ -87,19 +89,19 @@
           {% for post in posts %}
 
             <div class="card-box">
-              <a href="{% url 'dangun_app:trade_post' post.pk %}" class="trade-text-link">
+              <a href="{% url 'dangun_app:trade_post' post.product_id %}" class="trade-text-link">
                 <div class="card-img">
-                  {% if post.images %}
-                    <img src="{{ post.images.url }}" alt="{{ post.title }}">
+                  {% if post.product_img %}
+                    <img src="{{ post.product_img.url }}" alt="{{ post.title }}">
                   {% endif %}
                 </div>
                 <div class="card-info-box">
                   <h5>{{ post.title }}</h5>
                   <p class="bold">{{ post.price |intcomma}}원</p>
-                  <p>{{ post.location }}</p>
+                  <p>{{ post.deal_location }}</p>
                   <div class="flex-box">
                     <p>조회
-                      {{ post.view_num }}</p>
+                      {{ post.views }}</p>
                     <p>·</p>
                     <p>채팅
                       {{ post.chat_num }}</p>
