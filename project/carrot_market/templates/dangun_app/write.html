@@ -35,6 +35,12 @@
                         <img src="{% static 'img/icon_photo.png' %}" alt="이미지 설명" class="image-box">
                     {% endif %}
                     <input type="file" id="file" name="product_img" accept="image/*" style="display: none;">
+                    {% if post %}
+                        <img src="{{ post.product_img.url }}" alt="이미지 설명" class="image-box">
+                    {% else %}
+                        <img src="{% static 'img/icon_photo.png' %}" alt="이미지 설명" class="image-box">
+                    {% endif %}
+                    <input type="file" id="file" name="product_img" accept="image/*" style="display: none;">
                   </label>
                   <div>
                     <div class="flex-box column baseline title-box">
