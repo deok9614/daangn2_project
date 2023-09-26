@@ -21,11 +21,15 @@
         <div class="post-box">
           {% block content %}
             <img src="{{ post.product_img.url }}" alt="{{ post.title }}" class="block-box">
+            <img src="{{ post.product_img.url }}" alt="{{ post.title }}" class="block-box">
             <div class="flex-box between info-button-box">
               <div class="user-info">
                 <h6>{{ post.user_id }}</h6>
                 <p>{{ post.deal_location }}</p>
+                <h6>{{ post.user_id }}</h6>
+                <p>{{ post.deal_location }}</p>
               </div>
+              {% if request.user_id.username == post.user_id.username %}
               {% if request.user_id.username == post.user_id.username %}
                 <div class="flex-box button-box">
 <<<<<<< HEAD
