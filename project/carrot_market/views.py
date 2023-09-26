@@ -93,7 +93,8 @@ def edit(request, product_id):
 
 
 def main(request):
-    return render(request, 'dangun_app/main.html')
+    top_views_posts = Post.objects.filter(product_sold='N').order_by('-views')[:8]
+    return render(request, 'dangun_app/main.html', {'posts': top_views_posts})
 
 
 # test 중 - 신지수
