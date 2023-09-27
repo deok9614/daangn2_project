@@ -1,4 +1,1 @@
-.DS_Store
-django_env/
-*.json
 __pycache__/
