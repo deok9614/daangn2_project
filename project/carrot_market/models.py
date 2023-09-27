@@ -14,14 +14,20 @@ class Post(models.Model):
     price = models.IntegerField() 
     product_description = models.TextField()
     deal_location = models.CharField(max_length=100)
-    product_img = models.ImageField(upload_to='product_img/')
+    product_img = models.ImageField(upload_to='product_img/', null=True)
     created_at = models.DateTimeField(default=timezone.now)
     views = models.PositiveIntegerField(default=0)
-    
+
     product_reserved = models.CharField(max_length=1, default='N')  # 예약 여부
     product_sold = models.CharField(max_length=1, default='N')  # 판매 여부
 
     chat_num = models.PositiveIntegerField(default=0)  # 채팅 수
+# 이미지 파일 테스트중
+class PostImage(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, db_column='post')
+    image = models.ImageField(upload_to='product_img/', null=True)
+    def __str__(self):
+        return self.image.url
 
 class Chat(models.Model):
     user_id = models.CharField(max_length=50)
