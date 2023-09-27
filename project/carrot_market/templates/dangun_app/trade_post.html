@@ -20,27 +20,42 @@
       <div class="container column">
         <div class="post-box">
           {% block content %}
-            <img src="{{ post.product_img.url }}" alt="{{ post.title }}" class="block-box">
-            <img src="{{ post.product_img.url }}" alt="{{ post.title }}" class="block-box">
+          <div class="img-section">
+            {% if post.postimage_set.count > 1 %}
+            <div class="slider__btn">
+              <img src="{% static 'img/left.png' %}" id="scroll-left-btn">
+              <img src="{% static 'img/right.png' %}" id="scroll-right-btn">
+            </div>
+            {% endif %}
+            <div class="img-box" id="imglist">
+              {% for post_image in post.postimage_set.all %}
+              {% comment %} post와 관련된 postimage의 모든 관계(.all, 역참조) 반환 {% endcomment %}
+              <img src="{{ post_image.image.url }}" alt="{{ post.title }}">
+              {% endfor %}
+            </div>
+          </div>
+            
             <div class="flex-box between info-button-box">
               <div class="user-info">
                 <h6>{{ post.user_id }}</h6>
                 <p>{{ post.deal_location }}</p>
-                <h6>{{ post.user_id }}</h6>
-                <p>{{ post.deal_location }}</p>
               </div>
               {% if request.user_id.username == post.user_id.username %}
-              {% if request.user_id.username == post.user_id.username %}
+                {% if post.product_sold == 'Y' %}
                 <div class="flex-box button-box">
-<<<<<<< HEAD
-                  {% comment %} <a href="{% url 'dangun_app:edit' post.id %}"> {% endcomment %}
-=======
+                  <div class="button-box">
+                      <button class="grey">판매완료</button>
+                    </a>
+                  </div>
+                </div>
+                {% else %}
+                <div class="flex-box button-box">
                   <a href="{% url 'dangun_app:edit' post.product_id %}">
->>>>>>> template
                     <button class="grey">수정하기</button>
                   </a>
                   <button class="orange">채팅보기</button>
                 </div>
+                {% endif %}
               {% else %}
                 <div class="button-box">
                   <a href="{% url 'dangun_app:chat' %}">
@@ -71,5 +86,30 @@
     {% include 'dangun_app/footer.html' %}
 
   </body>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const imgList = document.getElementById("imglist");
+    const scrollLeftBtn = document.getElementById("scroll-left-btn");
+    const scrollRightBtn = document.getElementById("scroll-right-btn");
+    const images = imgList.querySelectorAll("img");
+    let currentIndex = 0;
 
+    function nextImage() {
+      images[currentIndex].style.display = "none";
+      currentIndex = (currentIndex + 1) % images.length;
+      images[currentIndex].style.display = "block";
+    }
+
+    function prevImage() {
+      images[currentIndex].style.display = "none";
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      images[currentIndex].style.display = "block";
+    }
+
+    images[currentIndex].style.display = "block";
+
+    scrollRightBtn.addEventListener("click", nextImage);
+    scrollLeftBtn.addEventListener("click", prevImage);
+  });
+</script>
 </html>

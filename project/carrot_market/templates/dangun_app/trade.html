@@ -44,8 +44,8 @@
             <div class="card-box">
               <a href="{% url 'dangun_app:trade_post' post.pk %}" class="trade-text-link">
                 <div class="card-img">
-                  {% if post.images %}
-                    <img src="{{ post.images.url }}" alt="{{ post.title }}">
+                  {% if post.product_img %}
+                    <img src="{{ post.product_img.url }}" alt="{{ post.title }}">
                   {% endif %}
                 </div>
                 <div class="card-info-box">
@@ -54,7 +54,7 @@
                   <p>{{ post.location }}</p>
                   <div class="flex-box">
                     <p>조회
-                      {{ post.view_num }}</p>
+                      {{ post.views }}</p>
                     <p>·</p>
                     <p>채팅
                       {{ post.chat_num }}</p>
