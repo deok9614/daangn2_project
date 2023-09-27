@@ -1,6 +1,7 @@
 {% comment %} {% load custom_filter%} {% endcomment %}
 {% load static%}
 {% load humanize %}
+{% autoescape off %}
 <!DOCTYPE html>
 <html>
 
@@ -26,12 +27,14 @@
                 {% csrf_token %}
                 <div class="flex-box">
                   <label class="img-upload">
-                    {% if post %}
-                        <img src="{{ post.product_img.url }}" alt="이미지 설명" class="image-box" id="image-box">
+                    {% if images %}
+                        {% for image in images %}
+                          <img src="/{{ BASIC_DIR }}/{{ image.image }}" alt="이미지 설명" class="image-box" id="image-box">
+                        {% endfor %}
                     {% else %}
-                        <img src="{% static 'img/icon_photo.png' %}" alt="이미지 설명" class="image-box">
+                      <img src="{% static 'img/icon_photo.png' %}" alt="이미지 설명" class="image-box">
                     {% endif %}
-                    <input type="file" id="file" name="product_img" accept="image/*" style="display: none;">
+                    <input type="file" id="file" name="image" accept="image/*" multiple style="display: none;">
                   </label>
                   <div>
                     <div class="flex-box column baseline title-box">
@@ -48,7 +51,6 @@
                     {% if post %}{{ post.product_description|striptags }}
                     {% endif %}
                   </textarea>
-
                 </div>
                 <div class="full-box">
                   <label for="deal_location" class="block-box">거래 희망 장소</label>
@@ -65,9 +67,9 @@
             </div>
           </div>
         {% endblock %}
-
-        <script type="text/javascript" src="{% static 'js/write.js' %}"></script>
-
-      </body>
-
-    </html>
+      </div>
+    </div>
+  </body>
+    <script type="text/javascript" src="{% static 'js/write.js' %}"></script>
+</html>
+{% endautoescape %}
