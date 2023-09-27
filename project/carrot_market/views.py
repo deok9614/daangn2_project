@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.contrib.auth.forms import AuthenticationForm  #  폼 객체를 생성하고, 이 폼 객체를 템플릿에 "form" 변수로 전달
-from .models import Post, User
+from .models import Post, User, PostImage
 from .forms import PostForm
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -41,9 +41,8 @@ def trade(request):
     top_views_posts = Post.objects.filter(product_sold='N').order_by('-views')
     return render(request, 'dangun_app/trade.html', {'posts': top_views_posts})
 
-def trade_post(request, product_id=None):
+def trade_post(request, product_id=None, post_id=None):
     post = get_object_or_404(Post, pk=product_id)
-
     # 쿠키 데이터를 이용 - 새로고침 시 조회수 늘어나지 않음
     cookie_name = f'main_{product_id}_viewed'
     if cookie_name not in request.COOKIES:
@@ -55,26 +54,34 @@ def trade_post(request, product_id=None):
         response = render(request, 'dangun_app/trade_post.html', {'post': post})
         response.set_cookie(cookie_name, 'true', expires=expires)
         return response
+
     try:
         user_profile = User.objects.get(user_id=post.user_id)
     except User.DoesNotExist:
             user_profile = None
+
     context = {
         'post': post,
         'user_profile': user_profile,
     }
+
     return render(request, 'dangun_app/trade_post.html', context)
 
 # @login_required
-def write(request, product_id = None):
+def write(request, product_id = None, post_id=None):
     post = None
-    form = PostForm(request.POST, request.FILES)
+    form = PostForm(request.POST)
+    image_form = PostImage(request.FILES.getlist("image"))
     if request.method == "POST":
-        print(form.errors)
         if form.is_valid():
             # 아이디 생성 시 주석 제거
             # post.user_id = request.user.username
             post = form.save()
+    
+            for image in request.FILES.getlist("image"):
+                image_form = PostImage(post_id=post.pk, image=image)
+                image_form.save()
+
             product_id = post.product_id
             return redirect('dangun_app:trade_post', product_id=product_id)
     
@@ -83,6 +90,11 @@ def write(request, product_id = None):
 
 def edit(request, product_id):
     post = get_object_or_404(Post, product_id=product_id)
+    try:
+        post_images = PostImage.objects.filter(post=product_id)
+    except:
+        pass
+    # post_images = PostImage.objects.filter(post=product_id)
     if product_id:
         post.product_description = post.product_description.strip()
         if request.method == "POST":
@@ -90,11 +102,22 @@ def edit(request, product_id):
             post.price = request.POST['price']
             post.product_description = request.POST['product_description']
             post.deal_location = request.POST['deal_location']
-            if 'product_img' in request.FILES:
-                post.product_img = request.FILES['product_img']
+            
+            if 'image' in request.FILES:
+            # 이미지 업데이트 처리
+                new_image = request.FILES['image']
+                if post_images.exists():
+                    # 해당 포스트에 이미지가 존재하는 경우, 이미지 업데이트
+                    post_image = post_images.first()
+                    post_image.image = new_image
+                    post_image.save()
+                else:
+                    # 이미지가 존재하지 않는 경우, 새로운 이미지 생성
+                    PostImage.objects.create(post=post, image=new_image)
+
             post.save()
             return redirect('dangun_app:trade_post', product_id=product_id)
-        return render(request,'dangun_app/write.html' , {'post':post})
+        return render(request,'dangun_app/write.html' , {'post':post, 'images': post_images})
 
 
 def main(request):
