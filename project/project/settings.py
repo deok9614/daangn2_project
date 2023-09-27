@@ -11,16 +11,29 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os, json
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# SECURITY WARNING: keep the secret key used in production secret!
+secret_file = os.path.join(BASE_DIR, "secrets.json")
 
+with open(secret_file) as f:
+    secrets = json.loads(f.read())
+
+
+def get_secret(setting, secrets=secrets):
+    try:
+        return secrets[setting]
+    except KeyError:
+        error_msg = "Set the {} environment variable".format(setting)
+        raise ImproperlyConfigured(error_msg)
+    
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-han953go3nxlfwx9x1!i*q*49g1sp-%e*yfv%+x6t!7*udqni3"
+SECRET_KEY = get_secret("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,12 +51,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "carrot_market",
-    'social_django',
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.kakao',
+    'django.contrib.humanize', # pip install django-humanize
+
 ]
 
 MIDDLEWARE = [
@@ -81,40 +90,25 @@ TEMPLATES = [
 WSGI_APPLICATION = "project.wsgi.application"
 
 # 구글 소셜 등록
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '17392684928-hvbmmhale95gbitu2aq2uld3vdic9des.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
-SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'http://127.0.0.1:8000/complete/google-oauth2/'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = get_secret("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = get_secret("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = "http://127.0.0.1:8000/"
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
-    # 'allauth.account.auth_backends.AuthenticationBackend',
-    'social_core.backends.naver.NaverOAuth2',
-    'social_core.backends.kakao.KakaoOAuth2',
-)
-
-AUTHENTICATION_CLASSES = (
     'allauth.account.auth_backends.AuthenticationBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.naver.NaverOAuth2',
 )
 
 SOCIAL_AUTH_AUTHENTICATION_BACKENDS = [
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.naver.NaverOAuth2',
-    'social_core.backends.kakao.KakaoOAuth2',
 ]
 
 # 네이버 소셜 등록
-SOCIAL_AUTH_NAVER_KEY = 'jL2MzeljSnMCwrGfa5vh'
-SOCIAL_AUTH_NAVER_SECRET = 'LPF6Apta0s'
-
-# 카카오 소셜 로그인 설정
-SOCIAL_AUTH_KAKAO_KEY = 'YOUR_KAKAO_CLIENT_ID'
-SOCIAL_AUTH_KAKAO_SECRET = 'YOUR_KAKAO_CLIENT_SECRET'
-SOCIAL_AUTH_KAKAO_SCOPE = ['account_email', 'gender']  # 필요한 스코프 설정
-
-# 카카오 소셜 로그인 콜백 URL
-SOCIAL_AUTH_KAKAO_CALLBACK_URL = 'http://127.0.0.1:8000/complete/kakao/'
+SOCIAL_AUTH_NAVER_KEY = get_secret("SOCIAL_AUTH_NAVER_KEY")
+SOCIAL_AUTH_NAVER_SECRET = get_secret("SOCIAL_AUTH_NAVER_SECRET")
 
 # 로그인 관련 설정
 LOGIN_URL = 'login'
