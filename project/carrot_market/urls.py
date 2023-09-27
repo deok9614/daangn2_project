@@ -16,5 +16,4 @@ urlpatterns = [
     path('main/', views.main, name='main'),
     path('write/<int:product_id>/edit', views.edit, name='edit'),
     path('register/', views.register, name='register'),
-    path('social/', socialaccount_views.signup, name='socialaccount_signup'),
 ]

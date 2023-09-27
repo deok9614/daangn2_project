@@ -84,7 +84,20 @@ def write(request, product_id=None):
     context = {'form': form}
     return render(request,'dangun_app/write.html' , context)
 
-
+def edit(request, product_id):
+    post = get_object_or_404(Post, product_id=product_id)
+    if product_id:
+        post.product_description = post.product_description.strip()
+        if request.method == "POST":
+            post.title = request.POST['title']
+            post.price = request.POST['price']
+            post.product_description = request.POST['product_description']
+            post.deal_location = request.POST['deal_location']
+            if 'product_img' in request.FILES:
+                post.product_img = request.FILES['product_img']
+            post.save()
+            return redirect('dangun_app:trade_post', product_id=product_id)
+        return render(request,'dangun_app/write.html' , {'post':post})
 
 def main(request):
     return render(request, 'dangun_app/main.html')

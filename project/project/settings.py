@@ -52,7 +52,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "carrot_market",
     'django.contrib.humanize', # pip install django-humanize
-
+    'social_django',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.kakao',
 ]
 
 MIDDLEWARE = [
@@ -63,6 +68,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = "project.urls"
@@ -74,10 +80,13 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth", #소셜로그인
             ],
         },
     },
@@ -85,6 +94,37 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "project.wsgi.application"
 
+# 구글 소셜 등록
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = get_secret("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = get_secret("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = "http://127.0.0.1:8000/"
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+    'social_core.backends.naver.NaverOAuth2',
+)
+
+SOCIAL_AUTH_AUTHENTICATION_BACKENDS = [
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.naver.NaverOAuth2',
+]
+
+# 네이버 소셜 등록
+SOCIAL_AUTH_NAVER_KEY = get_secret("SOCIAL_AUTH_NAVER_KEY")
+SOCIAL_AUTH_NAVER_SECRET = get_secret("SOCIAL_AUTH_NAVER_SECRET")
+
+# 로그인 관련 설정
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'main'
+SITE_ID = 2
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+ACCOUNT_LOGOUT_REDIRECT_URL = 'index'
+ACCOUNT_LOGOUT_ON_GET = True
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -92,7 +132,7 @@ WSGI_APPLICATION = "project.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "daangn2",
+        "NAME": "postgres",
         "USER": "postgres",
         "PASSWORD": "pwd1234!",
         "HOST": "oreumi-dangun.cyxsnajbfbeu.ap-northeast-2.rds.amazonaws.com",
@@ -135,12 +175,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#소셜로그인추가
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_UNIQUE_USERNAME = False
+ACCOUNT_USERNAME_REQUIRED = False
+SOCIALACCOUNT_AUTO_SIGNUP = False
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
