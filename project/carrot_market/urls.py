@@ -6,14 +6,13 @@ from . import views
 app_name = 'dangun_app'
 
 urlpatterns = [
-    path('', views.login, name='login'), # 메인 페이지
     path('chat/', views.chat, name='chat'),
     path('location/', views.location, name='location'),
-    path('login/', views.login, name='login'),
+    path('login/', views.custom_login, name='login'),
     path('trade/', views.trade, name='trade'),
     path('trade_post/<int:product_id>/',views.trade_post, name='trade_post'),
     path('write/', views.write, name='write'),
-    path('main/', views.main, name='main'),
+    path('', views.main, name='main'),# 메인 페이지 변경
     path('write/<int:product_id>/edit', views.edit, name='edit'),
     path('register/', views.register, name='register'),
 ]
