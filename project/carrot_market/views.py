@@ -31,6 +31,8 @@ def register(request):
 def chat(request):
     return render(request, 'dangun_app/chat.html')
 
+    return render(request, 'dangun_app/chat.html')
+
 def location(request):
     return render(request, 'dangun_app/location.html') 
 
