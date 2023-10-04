@@ -16,6 +16,7 @@ class Post(models.Model):
     product_description = models.TextField()
     deal_location = models.CharField(max_length=100)
     product_img = models.ImageField(upload_to='product_img/', null=True)
+    product_img = models.ImageField(upload_to='product_img/', null=True)
     created_at = models.DateTimeField(default=timezone.now)
     views = models.PositiveIntegerField(default=0)
 
@@ -34,5 +35,44 @@ class Chat(models.Model):
     user_id = models.CharField(max_length=50)
     product_id = models.IntegerField()
     chatting = models.TextField(null=True)
-    chatting_num = models.AutoField(primary_key=True)
+    chatting_num = models.AutoField(primary_key=True) # room_num
+
+class Address(models.Model):
+    street_address = models.CharField(max_length=100)  # 도로명 주소
+    city = models.CharField(max_length=50)             # 도시 또는 구
+    state = models.CharField(max_length=50)            # 주 또는 시/도
+    postal_code = models.CharField(max_length=10)       # 우편번호 (선택적)
+    country = models.CharField(max_length=50)           # 국가 (선택적)
+
+    def str(self):
+        return f"{self.street_address}, {self.city}, {self.state}"
+
+class ChatRoom(models.Model):
+    room_number = models.AutoField(primary_key=True)
+    starter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='started_chats')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_chats')
+    chat_created_at = models.DateTimeField(auto_now_add=True)
+    latest_message_time = models.DateTimeField(null=True, blank=True)
+    chat_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='chat_rooms', null=True, blank=True)
+
+
+    def str(self):
+        return f'ChatRoom: {self.starter.username} and {self.receiver.username}'
+
+class Message(models.Model):
+    chatroom = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='authored_messages')
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def str(self):
+        return f'Message: {self.author.username} at {self.timestamp}'
+
+    class Meta:
+        ordering = ['timestamp']
+
+    def save(self, args, **kwargs):
+        super().save(args, **kwargs)
+        self.chatroom.latest_message_time = self.timestamp
+        self.chatroom.save()
 

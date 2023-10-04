@@ -29,11 +29,11 @@
             <a href="{% url 'dangun_app:register' %}"  class="bold">회원가입</a>
           </p></br>
           <div class="social-button">
-            <a class="login-button" href="{% url 'social:begin' 'google-oauth2' %}">
+            {% comment %} <a class="login-button" href="{% url 'social:begin' 'google-oauth2' %}"> {% endcomment %}
               <img src="{% static 'img/btn_google.svg' %}" alt="Google 로고" />
               구글 로그인
             </a>
-            <a class="login-button" href="{% url 'social:begin' 'naver' %}">
+            {% comment %} <a class="login-button" href="{% url 'social:begin' 'naver' %}"> {% endcomment %}
               <img src="{% static 'img/btn_naver.svg' %}" alt="Naver 로고" />
               네이버 로그인
             </a>

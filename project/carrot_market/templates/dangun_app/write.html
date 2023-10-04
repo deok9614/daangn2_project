@@ -2,6 +2,7 @@
 {% load static%}
 {% load humanize %}
 {% autoescape off %}
+{% autoescape off %}
 <!DOCTYPE html>
 <html>
 
@@ -28,9 +29,15 @@
                 <div class="flex-box">
                   <label class="img-upload">
                     {% if images %}
-                        {% for image in images %}
-                          <img src="/{{ BASIC_DIR }}/{{ image.image }}" alt="이미지 설명" class="image-box" id="image-box">
-                        {% endfor %}
+                      {% if post.postimage_set.count > 1 %}
+                        <div class="slider__btn">
+                          <img src="{% static 'img/left.png' %}" id="scroll-left-btn">
+                          <img src="{% static 'img/right.png' %}" id="scroll-right-btn">
+                        </div>
+                      {% endif %}
+                      {% for image in images %}
+                        <img src="/{{ BASIC_DIR }}/{{ image.image }}" alt="이미지 설명" class="image-box" id="image-box">
+                      {% endfor %}
                     {% else %}
                       <img src="{% static 'img/icon_photo.png' %}" alt="이미지 설명" class="image-box">
                     {% endif %}

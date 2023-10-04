@@ -21,10 +21,14 @@
           <h4>동네라서 가능한 모든것<br>당근에서 가까운 이웃과 함께해요.</h4>
           <div class="flex-box gap16">
             <a href="https://play.google.com/store/apps/details?id=com.towneers.www&pli=1" style="text-decoration: none;">
+            <a href="https://play.google.com/store/apps/details?id=com.towneers.www&pli=1" style="text-decoration: none;">
             <button class="flex-box gap8">
               <img src="{% static 'img/icon_googleplay.png' %}" alt=""/>Google Play</button></a>
             <a href="https://apps.apple.com/kr/app/%EB%8B%B9%EA%B7%BC%EB%A7%88%EC%BC%93/id1018769995" style="text-decoration: none;">
+              <img src="{% static 'img/icon_googleplay.png' %}" alt=""/>Google Play</button></a>
+            <a href="https://apps.apple.com/kr/app/%EB%8B%B9%EA%B7%BC%EB%A7%88%EC%BC%93/id1018769995" style="text-decoration: none;">
             <button class="flex-box gap8">
+              <img src="{% static 'img/icon_appstore.png' %}" alt=""/>App Store</button></a>
               <img src="{% static 'img/icon_appstore.png' %}" alt=""/>App Store</button></a>
           </div>
         </div>
@@ -91,9 +95,11 @@
             <div class="card-box">
               <a href="{% url 'dangun_app:trade_post' post.product_id %}" class="trade-text-link">
                 <div class="card-img">
-                  {% if post.product_img %}
-                    <img src="{{ post.product_img.url }}" alt="{{ post.title }}">
-                  {% endif %}
+                  {% for post_image in post.postimage_set.all %}
+                    {% if forloop.first %}
+                      <img src="{{ post_image.image.url }}" alt="{{ post.title }}">
+                    {% endif %}
+                  {% endfor %}
                 </div>
                 <div class="card-info-box">
                   <h5>{{ post.title }}</h5>
