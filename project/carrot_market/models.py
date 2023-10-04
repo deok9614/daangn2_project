@@ -1,11 +1,9 @@
 from django.utils import timezone
 from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import User
+# from django.contrib.auth.models import AbstractUser
 
-class User(models.Model):
-    id = models.AutoField(primary_key=True)
-    user_id = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
-    location = models.CharField(max_length=100, null=True)
 
 class Post(models.Model):
     product_id = models.AutoField(primary_key=True)
@@ -22,6 +20,18 @@ class Post(models.Model):
     product_sold = models.CharField(max_length=1, default='N')  # 판매 여부
 
     chat_num = models.PositiveIntegerField(default=0)  # 채팅 수
+
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        ordering = ['-created_at']
+
+class UserProfile(models.Model): # 이름 충돌때문에 수정
+    user = models.CharField(max_length=50)
+    password = models.CharField(max_length=100)
+    region_certification = models.CharField(max_length=1, default='N')
+    location = models.CharField(max_length=100, null=True)
     
 # 이미지 파일 테스트중
 class PostImage(models.Model):
