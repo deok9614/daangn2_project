@@ -7,7 +7,7 @@ from .models import Post, User, PostImage
 from .forms import PostForm
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.contrib.auth import authenticate, login as auth_login
 
 def login(request):
     if request.method == 'POST':
@@ -17,8 +17,8 @@ def login(request):
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user is not None:  # 사용자가 인증되었을 때만
-                login(request, user)  # 로그인 함수에 사용자 객체를 전달합니다.
-                return HttpResponse("로그인 성공!")
+                auth_login(request, user)  # 로그인 함수에 사용자 객체를 전달합니다.
+                return redirect('dangun_app:main')
             else:
                 return HttpResponse("로그인 실패!")
     else:
