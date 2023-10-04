@@ -16,4 +16,6 @@ urlpatterns = [
     path('main/', views.main, name='main'),
     path('write/<int:product_id>/edit', views.edit, name='edit'),
     path('register/', views.register, name='register'),
+    path('chat_room/<int:pk>/', views.chat_room, name='chat_room'),
+    path('chat_room/', views.chat_room_test, name='chat_room'),
 ]
