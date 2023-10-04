@@ -1,4 +1,4 @@
-{% load custom_filter%}
+{% comment %} {% load custom_filter%} {% endcomment %}
 {% load static %}{% load humanize %}
 <!DOCTYPE html>
 <html>
@@ -44,9 +44,11 @@
             <div class="card-box">
               <a href="{% url 'dangun_app:trade_post' post.pk %}" class="trade-text-link">
                 <div class="card-img">
-                  {% if post.images %}
-                    <img src="{{ post.images.url }}" alt="{{ post.title }}">
-                  {% endif %}
+                  {% for post_image in post.postimage_set.all %}
+                    {% if forloop.first %}
+                      <img src="{{ post_image.image.url }}" alt="{{ post.title }}">
+                    {% endif %}
+                  {% endfor %}
                 </div>
                 <div class="card-info-box">
                   <h5>{{ post.title }}</h5>
@@ -54,7 +56,7 @@
                   <p>{{ post.location }}</p>
                   <div class="flex-box">
                     <p>조회
-                      {{ post.view_num }}</p>
+                      {{ post.views }}</p>
                     <p>·</p>
                     <p>채팅
                       {{ post.chat_num }}</p>

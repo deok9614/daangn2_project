@@ -84,46 +84,47 @@ def write(request, product_id = None, post_id=None):
 
             product_id = post.product_id
             return redirect('dangun_app:trade_post', product_id=product_id)
+
     
     context = {'form': form}
     return render(request,'dangun_app/write.html' , context)
 
-def edit(request, product_id):
-    post = get_object_or_404(Post, product_id=product_id)
-    try:
-        post_images = PostImage.objects.filter(post=product_id)
-    except:
-        pass
-    # post_images = PostImage.objects.filter(post=product_id)
+def edit(request, product_id=None):
+    post = None
     if product_id:
-        post.product_description = post.product_description.strip()
-        if request.method == "POST":
+        post = get_object_or_404(Post, product_id=product_id)
+
+    if request.method == "POST":
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+
             post.title = request.POST['title']
             post.price = request.POST['price']
             post.product_description = request.POST['product_description']
             post.deal_location = request.POST['deal_location']
-            
-            if 'image' in request.FILES:
-            # 이미지 업데이트 처리
-                new_image = request.FILES['image']
-                if post_images.exists():
-                    # 해당 포스트에 이미지가 존재하는 경우, 이미지 업데이트
-                    post_image = post_images.first()
-                    post_image.image = new_image
-                    post_image.save()
-                else:
-                    # 이미지가 존재하지 않는 경우, 새로운 이미지 생성
-                    PostImage.objects.create(post=post, image=new_image)
 
             post.save()
+
+            if request.FILES:
+                PostImage.objects.filter(post=post).delete()
+                for image in request.FILES.values():
+                    PostImage.objects.create(
+                        post=post,
+                        image=image)
+
             return redirect('dangun_app:trade_post', product_id=product_id)
-        return render(request,'dangun_app/write.html' , {'post':post, 'images': post_images})
+    
+    else:
+        form = PostForm(instance=post)
+
+    return render(request,'dangun_app/write.html' , {'post':post,'form': form})
+        
 
 
 def main(request):
     top_views_posts = Post.objects.filter(product_sold='N').order_by('-views')[:8]
     return render(request, 'dangun_app/main.html', {'posts': top_views_posts})
-
 
 # test 중 - 신지수
 # @login_required
