@@ -295,7 +295,7 @@ def register(request):
                 user = User.objects.create_user(username=username, password=password1)
                 
                 # 유저를 로그인 상태로 만듦
-                login(request, user)
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             
             
                 return redirect('dangun_app:login')
