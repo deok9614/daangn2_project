@@ -378,13 +378,14 @@ def set_region(request):
                 user_profile.region = region
                 user_profile.save()
 
-                return redirect('dangun_app:location')
+                return redirect('dangun_app:location')  # 동네 설정 후 "location" 페이지로 리디렉션
             except Exception as e:
                 return JsonResponse({"status": "error", "message": str(e)})
         else:
             return JsonResponse({"status": "error", "message": "Region cannot be empty"})
     else:
         return JsonResponse({"status": "error", "message": "Method not allowed"}, status=405)
+
 
 # 지역인증 완료
 @login_required
@@ -393,4 +394,15 @@ def set_region_certification(request):
         request.user.profile.region_certification = 'Y'
         request.user.profile.save()
         messages.success(request, "인증되었습니다")
-        return redirect('dangun_app:location')
+        return redirect("dangun_app:location")
+
+
+# 내 동네 설정
+def show_user_region(request):
+    user = request.user  # 현재 사용자
+    try:
+        user_region = Region.objects.get(user=user)  # 사용자의 지역 정보 가져오기
+    except Region.DoesNotExist:
+        user_region = None
+
+    return render(request, 'your_template.html', {'user_region': user_region})

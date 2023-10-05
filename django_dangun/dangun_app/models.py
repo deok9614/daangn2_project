@@ -63,3 +63,12 @@ class Message(models.Model):
         # 새 메시지가 저장될 때마다 chatroom의 latest_message_time을 업데이트
         self.chatroom.latest_message_time = self.timestamp
         self.chatroom.save()
+
+
+
+class Region(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # 사용자와의 관계
+    address = models.CharField(max_length=255)  # 주소를 저장할 필드
+
+    def __str__(self):
+        return self.address
