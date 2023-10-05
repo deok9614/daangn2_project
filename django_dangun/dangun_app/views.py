@@ -186,8 +186,6 @@ def main(request):
     return render(request, 'dangun_app/main.html', {'posts': top_views_posts})
 
 
-
-
 # 테스트용 화면
 def test(request):
     return render(request, 'dangun_app/test.html')

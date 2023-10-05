@@ -7,7 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    <!-- {% comment %} AdminUserList.html {% endcomment %} -->
 <b><font size="5" color="gray">전체 회원 목록</font></b>
 <br><br>
 <table border="1" cellspacing="0">
@@ -24,7 +23,6 @@
 
     {% for user in user_list %}
     <tr>
-        <td>{{ user.userType }}</td>
         <td>{{ user.id }}</td>
         <td>{{ user.passwd }}</td>
         <td>{{ user.name }}</td>
