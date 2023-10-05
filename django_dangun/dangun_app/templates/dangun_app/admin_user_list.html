@@ -12,6 +12,7 @@
 <table border="1" cellspacing="0">
     <tr>
         <th>아이디</th>
+        <th>회원 유형</th>
         <th>이름</th>
         <th>비밀번호</th>
         <th>삭제</th>
@@ -21,12 +22,14 @@
     {% for user in user_list %}
     <tr>
         <td>{{ user.id }}</td>
+        <td>{{ user.type }}</td>
         <td>{{ user.username }}</td>
         <td>{{ user.password }}</td>
         <td>
-            <input type="button" value="삭제" 
-                   onClick="location.href='{% url 'dangun_app:admin_user_delete' user.id %}'">
-        </td>
+            <form method="post" action="{% url 'dangun_app:admin_user_delete' user.id %}">
+                {% csrf_token %}
+                <input type="submit" value="삭제">
+            </form>
         <td>
             <input type="button" value="수정" 
                    onClick="location.href='{% url 'dangun_app:admin_user_modify' user.id %}'">

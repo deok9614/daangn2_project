@@ -10,7 +10,7 @@ from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views import View
 from datetime import timedelta, datetime
-
+from django.http import Http404
 
 from .models import Post,UserProfile, ChatRoom, Message
 
@@ -415,20 +415,15 @@ def admin_user_list(request):
     user_list = User.objects.all().order_by('id') # 아이디를 오름차순으로 정렬
     return render(request, 'dangun_app/admin_user_list.html', {'user_list': user_list})
 
-# 유저삭제
 def admin_user_delete(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    
     if request.method == 'POST':
-        try:
-            # 회원 정보 삭제
-            user = get_object_or_404(User, pk=user_id)
-            user.delete()
-            return redirect('dangun_app:admin_user_list')  # 삭제 후 유저 목록 페이지로 리디렉션
-        except User.DoesNotExist:
-            # 해당 ID의 회원이 존재하지 않을 경우 예외 처리
-            pass
-
-    # POST 요청이 아닌 경우에도 유저 목록 페이지로 리디렉션
-    return redirect('dangun_app:admin_user_list')
+        user.delete()
+        return redirect('dangun_app:admin_user_list')
+    
+    # GET 요청에 대한 처리 (페이지를 보여줄 때)
+    return render(request, 'dangun_app/admin_user_delete.html', {'user': user})
 
 # 유저수정
 def admin_user_modify(request, user_id):
@@ -436,12 +431,13 @@ def admin_user_modify(request, user_id):
         try:
             # POST 요청을 받으면 폼에서 입력한 회원 정보를 저장합니다.
             user = User.objects.get(pk=user_id)
-            user.set_password(request.POST['passwd'])  # 비밀번호 변경
-            user.first_name = request.POST['name']      # 이름 변경
-            user.email = request.POST['email']          # 이메일 변경
+            user.set_password(request.POST['password'])  # 비밀번호 변경
+            user.username = request.POST['username']      # 이름 변경
             # 다른 필드도 유사하게 처리하실 수 있습니다.
             user.save()
-            return redirect('admin_user_list')  # 수정 후 유저 목록 페이지로 리디렉션
+            return redirect('dangun_app:admin_user_list')  # 수정 후 유저 목록 페이지로 리디렉션
         except User.DoesNotExist:
             # 해당 ID의 회원이 존재하지 않을 경우 예외 처리
             pass
+
+    return render(request, 'dangun_app/admin_user_modify.html', {'user': User.objects.get(pk=user_id)})

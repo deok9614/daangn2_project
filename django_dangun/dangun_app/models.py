@@ -29,7 +29,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     region = models.CharField(max_length=100, null=True)
     region_certification = models.CharField(max_length=1, default='N')
-
+    type = models.CharField(max_length=100, null=True)  # type 필드 추가
+    
     def __str__(self):
         return f'{self.user.username} Profile'
     
