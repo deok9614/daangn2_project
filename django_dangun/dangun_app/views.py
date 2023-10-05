@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views import View
+from datetime import timedelta, datetime
 
 
 from .models import Post,UserProfile, ChatRoom, Message
@@ -200,14 +201,21 @@ def trade(request):
 def trade_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
-    # 조회수 증가
-    if request.user.is_authenticated:
-        if request.user != post.user:
+    cookie_name = f'main_{pk}_viewed'
+    if cookie_name not in request.COOKIES:
+        if request.user.is_authenticated:
+            if request.user != post.user:
+                post.view_num += 1
+        else:
             post.view_num += 1
-            post.save()
-    else:
-        post.view_num += 1
+
         post.save()
+        # 조회수 증가 막는 기간 : 하루
+        expires = datetime.now() + timedelta(days=1)
+        expires = expires.strftime('%a, %d-%b-%Y %H:%M:%S GMT')
+        response = render(request, 'dangun_app/trade_post.html', {'post': post})
+        response.set_cookie(cookie_name, 'true', expires=expires)
+        return response
 
     try:
         user_profile = UserProfile.objects.get(user=post.user)
