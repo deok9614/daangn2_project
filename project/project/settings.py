@@ -55,7 +55,6 @@ INSTALLED_APPS = [
     'carrot_market',
     'channels',
     'channels_redis',
-    'rest_framework', # pip install djangorestframework
     'social_django', # pip install social-auth-app-django
     'django.contrib.sites',
     'allauth', # pip install django-allauth

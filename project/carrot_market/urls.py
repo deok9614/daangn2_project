@@ -1,7 +1,6 @@
 from django.urls import path, include
 from django.contrib import admin
 from . import views
-# from rest_framework.routers import DefaultRouter
 
 app_name = 'dangun_app'
 
@@ -26,5 +25,4 @@ urlpatterns = [
     path('get_latest_chat/<int:pk>/', views.get_latest_chat, name='get_latest_chat'),
 
     path('confirm_deal/<int:post_id>/', views.ConfirmDealView.as_view(), name='confirm_deal'),
-    
 ]
