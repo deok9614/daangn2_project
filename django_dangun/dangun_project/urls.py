@@ -24,7 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('dangun_app.urls')), 
     path('favicon.ico', RedirectView.as_view(url='/static/dangun_app/favicon.ico', permanent=True)),
-
+    path('accounts/', include('allauth.urls')),
+    path('auth/', include('social_django.urls', namespace='social'))
 ]
 
 if settings.DEBUG:

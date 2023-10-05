@@ -9,7 +9,6 @@ secrets.json
 *.pyc
 __pycache__
 db.sqlite3
-media
 
 # Backup files # 
 *.bak 
@@ -144,7 +143,6 @@ GitHub.sublime-settings
 secrets.py
 
 # add
-media/
 django_env
 .vscode
 db_password.txt
