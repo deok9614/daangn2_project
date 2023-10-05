@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.contrib.auth.forms import AuthenticationForm  #  폼 객체를 생성하고, 이 폼 객체를 템플릿에 "form" 변수로 전달
-from .models import Post, UserProfile, PostImage
+from .models import Post, UserProfile, PostImage, ChatRoom, Message
 from .forms import PostForm
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -83,8 +83,8 @@ def trade_post(request, product_id=None, post_id=None):
         return response
 
     try:
-        user_profile = User.objects.get(user_id=post.user_id)
-    except User.DoesNotExist:
+        user_profile = UserProfile.objects.get(user_id=post.user_id)
+    except UserProfile.DoesNotExist:
             user_profile = None
 
     context = {
@@ -152,8 +152,15 @@ def main(request):
     return render(request, 'dangun_app/main.html', {'posts': top_views_posts})
 
 
-from django.contrib.auth.models import UserProfile
- 
+from django.contrib.auth.models import User
+
+from django.contrib.auth import login
+from django.shortcuts import render, redirect
+
+from django.utils.decorators import method_decorator
+from django.views import View
+
+
 def chat_room_test(request):
     return render(request, 'dangun_app/chat_room.html')
 

@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='User',
+            name='UserProfile',
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False)),
                 ('user_id', models.CharField(max_length=50)),

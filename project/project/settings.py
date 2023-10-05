@@ -44,6 +44,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne', # pip install daphne
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,6 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize', # pip install django-humanize
     'carrot_market',
+    'channels',
+    'channels_redis',
     'rest_framework', # pip install djangorestframework
     'social_django', # pip install social-auth-app-django
     'django.contrib.sites',
@@ -60,6 +63,19 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.kakao',
 ]
+
+ASGI_APPLICATION  =  'project.asgi.application'
+
+ALLOWED_HOSTS = ['121.142.23.244', 'localhost', '127.0.0.1']
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -130,14 +146,26 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
+settings_dir = os.path.dirname(__file__)
+db_password_file = os.path.join(settings_dir, 'db_password.txt')
+
+def read_db_password():
+    with open(db_password_file, 'r') as file:
+        db_password = file.read().strip()
+    return db_password  
+
+SECRETS_DIR = os.path.join(BASE_DIR, 'secrets')
+db = json.load(open(os.path.join(SECRETS_DIR, 'db.json')))
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "daangn2",
-        "USER": "postgres",
-        "PASSWORD": "",
-        "HOST": "",
-        "PORT": "5432",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': db['DATABASE'],
+        'USER': db['USER'],
+        'PASSWORD': db['PASSWORD'],
+        'HOST': db['HOST'],
+        'PORT': db['PORT'],
     }
 }
 
