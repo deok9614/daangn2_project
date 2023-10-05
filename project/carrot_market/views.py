@@ -3,13 +3,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
-from django.contrib.auth.forms import AuthenticationForm  #  폼 객체를 생성하고, 이 폼 객체를 템플릿에 "form" 변수로 전달
 from .models import Post, UserProfile, PostImage, ChatRoom, Message
-from .forms import PostForm
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Post, UserProfile, PostImage
 from .forms import PostForm, CustomLoginForm, CustomUserForm
 from django.contrib import messages
 
@@ -59,8 +56,6 @@ def register(request):
     return render(request, 'registration/register.html', {'form': form, 'error_message': error_message})
 
 def chat(request):
-    return render(request, 'dangun_app/chat.html')
-
     return render(request, 'dangun_app/chat.html')
 
 def location(request):
@@ -149,19 +144,13 @@ def edit(request, product_id=None):
         form = PostForm(instance=post)
 
     return render(request,'dangun_app/write.html' , {'post':post,'form': form})
-        
-
 
 def main(request):
     top_views_posts = Post.objects.filter(product_sold='N').order_by('-views')[:8]
     return render(request, 'dangun_app/main.html', {'posts': top_views_posts})
 
 
-from django.contrib.auth.models import User
-
-from django.contrib.auth import login
-from django.shortcuts import render, redirect
-
+# 채팅하기
 from django.utils.decorators import method_decorator
 from django.views import View
 

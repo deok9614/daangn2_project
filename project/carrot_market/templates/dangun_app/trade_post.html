@@ -39,8 +39,6 @@
               <div class="user-info">
                 <h6>{{ post.user_id }}</h6>
                 <p>{{ post.deal_location }}</p>
-                <h6>{{ post.user_id }}</h6>
-                <p>{{ post.deal_location }}</p>
               </div>
               {% if request.user_id.username == post.user_id.username %}
                 {% if post.product_sold == 'Y' %}
@@ -74,13 +72,10 @@
                   원</h3>
               </div>
               <p>{{ post.product_description }}</p>
-              <p>{{ post.product_description }}</p>
               <div class="location-views-box flex-box between">
                 <p>희망 거래장소 |
                   {{ post.deal_location }}</p>
-                  {{ post.deal_location }}</p>
                 <p>조회수
-                  {{ post.views }}</p>
                   {{ post.views }}</p>
               </div>
             </div>
