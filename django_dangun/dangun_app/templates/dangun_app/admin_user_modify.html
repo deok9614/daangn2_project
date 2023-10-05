@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원수정</title>
+</head>
+<body>
+<h1>회원정보수정</h1>
+    <form action="AdminModPro.jsp" method="post">
+        <input type="text" name="id" value="{{ id }}" readonly><br>
+        패스워드 변경 <input type="password" name="passwd" value="{{ rs.id }}"><br>
+        이   름  변  경 <input type="text" name="name" value="{{ rs.name }}"><br>
+        이 메 일 변 경 <input type="text" name="email" value="{{ rs.email }}"><br>
+        연 락 처 변 경 <input type="text" name="phone" value="{{ rs.phone }}"><br>
+        주   소  변  경 <input type="text" name="address" value="{{ rs.address }}"><br>
+        <input type="submit" value="수정">
+    </form>
+</body>
+</html>

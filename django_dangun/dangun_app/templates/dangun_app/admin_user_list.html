@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- {% comment %} AdminUserList.html {% endcomment %} -->
+<b><font size="5" color="gray">전체 회원 목록</font></b>
+<br><br>
+<table border="1" cellspacing="0">
+    <tr>
+        <th>사용자 유형</th>
+        <th>아이디</th>
+        <th>비밀번호</th>
+        <th>이름</th>
+        <th>이메일</th>
+        <th>연락처</th>
+        <th>주소</th>
+        <th>비고</th>
+    </tr>
+
+    {% for user in user_list %}
+    <tr>
+        <td>{{ user.userType }}</td>
+        <td>{{ user.id }}</td>
+        <td>{{ user.passwd }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.address }}</td>
+        <td>
+            <input type="button" value="삭제" 
+                   onClick="location.href='{% url 'dangun_app:admin_user_delete' user.id %}'">
+            <input type="button" value="수정" 
+                   onClick="location.href='{% url 'dangun_app:admin_user_modify' user.id %}'">
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<br>
+<input type="button" value="확인" onClick="location.href='../AdminMain.html'">
+
+</body>
+</html>
