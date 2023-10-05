@@ -215,6 +215,8 @@ def chat_room(request, pk):
         'opponent': opponent_user,
     })
 
+from django.http import JsonResponse
+from django.db.models import Q
 
 # 채팅방 생성 또는 참여
 def create_or_join_chat(request, pk):

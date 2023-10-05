@@ -18,4 +18,5 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('chat_room/<int:pk>/', views.chat_room, name='chat_room'),
     path('chat_room/', views.chat_room_test, name='chat_room'),
+    path('search/', views.search, name='search'),
 ]
