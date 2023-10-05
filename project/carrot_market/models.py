@@ -1,9 +1,11 @@
 from django.utils import timezone
-from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 
-
+class UserProfile(models.Model): # 이름 충돌때문에 수정
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    region_certification = models.CharField(max_length=1, default='N')
+    location = models.CharField(max_length=100, null=True)
 
 class Post(models.Model):
     product_id = models.AutoField(primary_key=True)
@@ -24,14 +26,9 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
-    
     class Meta:
         ordering = ['-created_at']
 
-class UserProfile(models.Model): # 이름 충돌때문에 수정
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    region_certification = models.CharField(max_length=1, default='N')
-    location = models.CharField(max_length=100, null=True)
     
 # 이미지 파일 테스트중
 class PostImage(models.Model):
@@ -40,12 +37,7 @@ class PostImage(models.Model):
     def __str__(self):
         return self.image.url
 
-class Chat(models.Model):
-    user_id = models.CharField(max_length=50)
-    product_id = models.IntegerField()
-    chatting = models.TextField(null=True)
-    chatting_num = models.AutoField(primary_key=True) # room_num
-
+# 지역
 class Address(models.Model):
     street_address = models.CharField(max_length=100)  # 도로명 주소
     city = models.CharField(max_length=50)             # 도시 또는 구
@@ -56,6 +48,12 @@ class Address(models.Model):
     def str(self):
         return f"{self.street_address}, {self.city}, {self.state}"
 
+# 채팅
+class Chat(models.Model):
+    user_id = models.CharField(max_length=50)
+    product_id = models.IntegerField()
+    chatting = models.TextField(null=True)
+    chatting_num = models.AutoField(primary_key=True) # room_num
 class ChatRoom(models.Model):
     room_number = models.AutoField(primary_key=True)
     starter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='started_chats')
