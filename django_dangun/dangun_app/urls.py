@@ -37,6 +37,10 @@ urlpatterns = [
 
     path('confirm_deal/<int:post_id>/', views.ConfirmDealView.as_view(), name='confirm_deal'),
 
+    path('admin_main/', views.admin_main, name='admin_main'),  # [관리자] 메인 페이지
+    path('admin_user_list/', views.admin_user_list, name='admin_user_list'),  # [관리자] 유저 정보 관리 리스트
+    path('admin_user_delete/<int:user_id>/', views.admin_user_delete, name='admin_user_delete'),  # [관리자] 유저 정보 삭제
+    path('admin_user_modify/<int:user_id>/', views.admin_user_modify, name='admin_user_modify'),  # [관리자] 유저 정보 수정    
 ]
 
 

@@ -404,3 +404,44 @@ def show_user_region(request):
         user_region = None
 
     return render(request, 'your_template.html', {'user_region': user_region})
+
+# 관리자메인 페이지
+def admin_main(request):
+    top_views_posts = Post.objects.filter(product_sold='N').order_by('-view_num')[:4]
+    return render(request, 'dangun_app/admin_main.html', {'posts': top_views_posts})
+
+# 유저관리 페이지
+def admin_user_list(request):
+    user_list = User.objects.all().order_by('id') # 아이디를 오름차순으로 정렬
+    return render(request, 'dangun_app/admin_user_list.html', {'user_list': user_list})
+
+# 유저삭제
+def admin_user_delete(request, user_id):
+    if request.method == 'POST':
+        try:
+            # 회원 정보 삭제
+            user = get_object_or_404(User, pk=user_id)
+            user.delete()
+            return redirect('dangun_app:admin_user_list')  # 삭제 후 유저 목록 페이지로 리디렉션
+        except User.DoesNotExist:
+            # 해당 ID의 회원이 존재하지 않을 경우 예외 처리
+            pass
+
+    # POST 요청이 아닌 경우에도 유저 목록 페이지로 리디렉션
+    return redirect('dangun_app:admin_user_list')
+
+# 유저수정
+def admin_user_modify(request, user_id):
+    if request.method == 'POST':
+        try:
+            # POST 요청을 받으면 폼에서 입력한 회원 정보를 저장합니다.
+            user = User.objects.get(pk=user_id)
+            user.set_password(request.POST['passwd'])  # 비밀번호 변경
+            user.first_name = request.POST['name']      # 이름 변경
+            user.email = request.POST['email']          # 이메일 변경
+            # 다른 필드도 유사하게 처리하실 수 있습니다.
+            user.save()
+            return redirect('admin_user_list')  # 수정 후 유저 목록 페이지로 리디렉션
+        except User.DoesNotExist:
+            # 해당 ID의 회원이 존재하지 않을 경우 예외 처리
+            pass
