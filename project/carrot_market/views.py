@@ -1,16 +1,17 @@
 from datetime import timedelta, datetime
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
-from django.contrib.auth.forms import AuthenticationForm  #  폼 객체를 생성하고, 이 폼 객체를 템플릿에 "form" 변수로 전달
-from .models import Post, UserProfile, PostImage
-from .forms import PostForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login as auth_login
-from django.http import JsonResponse
-from django.db.models import Q
+from django.contrib.auth.models import User
+from .models import Post, UserProfile, PostImage
 from .forms import PostForm, CustomLoginForm, CustomUserForm
+
+def logout_user(request):
+    logout(request)
+    return redirect('/')
 
 def custom_login(request):
     if request.user.is_authenticated:
@@ -21,37 +22,37 @@ def custom_login(request):
             if form.is_valid():
                 username = form.cleaned_data['username']
                 password = form.cleaned_data['password']
+
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
-                    print(form.errors)
+                    # 수정 중!!
                     login(request, user)
                     return redirect('dangun_app:main')
                 else:
-                    print(form.errors)
                     return HttpResponse("로그인 실패!")
-        else:
-            form = CustomLoginForm()
         return render(request, 'registration/login.html', {'form': form})
-    
+
 def register(request):
+    error_message = ''
     if request.method == 'POST':
         form = CustomUserForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-
+        username = request.POST.get('username')
+        if User.objects.filter(username=username).exists():
+            error_message = "이미 존재하는 아이디입니다."
+        elif form.is_valid():
             password1 = form.cleaned_data['password1']
             password2 = form.cleaned_data['password2']
 
             if password1 == password2:
-                user.user = form.cleaned_data['username']
-                user.password = form.cleaned_data['password1']
-                user.save()
-            # login(request, user)
-            return redirect('dangun_app:main')
+                user = User.objects.create_user(username=username, password=password1)
+                login(request, user)
+                return redirect('dangun_app:main')
+            else:
+                form.add_error('password2', '비밀번호가 일치하지 않습니다')
     else:
         form = CustomUserForm()
 
-    return render(request, 'registration/register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form, 'error_message': error_message})
 
 def chat(request):
     return render(request, 'dangun_app/chat.html')
@@ -66,7 +67,7 @@ def trade(request):
     top_views_posts = Post.objects.filter(product_sold='N').order_by('-views')
     return render(request, 'dangun_app/trade.html', {'posts': top_views_posts})
 
-def trade_post(request, product_id=None, post_id=None):
+def trade_post(request, product_id):
     post = get_object_or_404(Post, pk=product_id)
     # 쿠키 데이터를 이용 - 새로고침 시 조회수 늘어나지 않음
     cookie_name = f'main_{product_id}_viewed'
@@ -81,39 +82,36 @@ def trade_post(request, product_id=None, post_id=None):
         return response
 
     try:
-        user_profile = User.objects.get(user_id=post.user_id)
-    except User.DoesNotExist:
+        user_profile = UserProfile.objects.get(user=post.product_id)
+    except UserProfile.DoesNotExist:
             user_profile = None
 
     context = {
         'post': post,
         'user_profile': user_profile,
+        # 'chat_room': chat_room,
     }
 
     return render(request, 'dangun_app/trade_post.html', context)
 
-# @login_required
-def write(request, product_id = None, user_id=None):
-    post = None
-    form = PostForm(request.POST)
-    image_form = PostImage(request.FILES.getlist("image"))
+@login_required
+def write(request):
     if request.method == "POST":
+        form = PostForm(request.POST)
+        image_form = PostImage(request.FILES.getlist("image"))
         if form.is_valid():
             post = form.save(commit=False)
-            # post.user_id = request.user.user_id
-
-            post = form.save()
+            post.user_id = request.user
+            post.save()
     
             for image in request.FILES.getlist("image"):
                 image_form = PostImage(post_id=post.pk, image=image)
                 image_form.save()
 
-            product_id = post.product_id
-            return redirect('dangun_app:trade_post', product_id=product_id)
-
-    
-    context = {'form': form}
-    return render(request,'dangun_app/write.html' , context)
+            return redirect('dangun_app:trade_post', product_id=post.pk)
+    else:
+        form = PostForm()
+    return render(request,'dangun_app/write.html' , {'form': form})
 
 def edit(request, product_id=None):
     post = None
@@ -140,11 +138,14 @@ def edit(request, product_id=None):
                         image=image)
 
             return redirect('dangun_app:trade_post', product_id=product_id)
+    
     else:  # GET 요청인 경우
         form = PostForm(instance=post)
 
     return render(request,'dangun_app/write.html' , {'post':post,'form': form})
         
+
+
 def main(request):
     top_views_posts = Post.objects.filter(product_sold='N').order_by('-views')[:8]
     return render(request, 'dangun_app/main.html', {'posts': top_views_posts})
