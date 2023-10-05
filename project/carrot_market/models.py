@@ -1,14 +1,13 @@
 from django.utils import timezone
 from django.utils import timezone
 from django.db import models
-from django.conf import settings
 from django.contrib.auth.models import User
-# from django.contrib.auth.models import AbstractUser
+
 
 
 class Post(models.Model):
     product_id = models.AutoField(primary_key=True)
-    user_id = models.CharField(max_length=50, default='oreumi')
+    user_id = models.CharField(max_length=50)
     title = models.CharField(max_length=50)
     price = models.IntegerField() 
     product_description = models.TextField()
@@ -30,8 +29,7 @@ class Post(models.Model):
         ordering = ['-created_at']
 
 class UserProfile(models.Model): # 이름 충돌때문에 수정
-    user = models.CharField(max_length=50)
-    password = models.CharField(max_length=100)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     region_certification = models.CharField(max_length=1, default='N')
     location = models.CharField(max_length=100, null=True)
     

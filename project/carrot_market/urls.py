@@ -9,6 +9,7 @@ urlpatterns = [
     path('chat/', views.chat, name='chat'),
     path('location/', views.location, name='location'),
     path('login/', views.custom_login, name='login'),
+    path('logout/', views.logout_user, name='logout'),
     path('trade/', views.trade, name='trade'),
     path('trade_post/<int:product_id>/',views.trade_post, name='trade_post'),
     path('write/', views.write, name='write'),
