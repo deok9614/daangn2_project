@@ -29,7 +29,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     region = models.CharField(max_length=100, null=True)
     region_certification = models.CharField(max_length=1, default='N')
-
+    type = models.CharField(max_length=100, null=True)  # type 필드 추가
+    
     def __str__(self):
         return f'{self.user.username} Profile'
     
@@ -63,3 +64,12 @@ class Message(models.Model):
         # 새 메시지가 저장될 때마다 chatroom의 latest_message_time을 업데이트
         self.chatroom.latest_message_time = self.timestamp
         self.chatroom.save()
+
+
+
+class Region(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # 사용자와의 관계
+    address = models.CharField(max_length=255)  # 주소를 저장할 필드
+
+    def __str__(self):
+        return self.address

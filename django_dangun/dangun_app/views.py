@@ -10,7 +10,7 @@ from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views import View
 from datetime import timedelta, datetime
-
+from django.http import Http404
 
 from .models import Post,UserProfile, ChatRoom, Message
 
@@ -184,8 +184,6 @@ class ConfirmDealView(View):
 def main(request):
     top_views_posts = Post.objects.filter(product_sold='N').order_by('-view_num')[:4] 
     return render(request, 'dangun_app/main.html', {'posts': top_views_posts})
-
-
 
 
 # 테스트용 화면
@@ -378,13 +376,14 @@ def set_region(request):
                 user_profile.region = region
                 user_profile.save()
 
-                return redirect('dangun_app:location')
+                return redirect('dangun_app:location')  # 동네 설정 후 "location" 페이지로 리디렉션
             except Exception as e:
                 return JsonResponse({"status": "error", "message": str(e)})
         else:
             return JsonResponse({"status": "error", "message": "Region cannot be empty"})
     else:
         return JsonResponse({"status": "error", "message": "Method not allowed"}, status=405)
+
 
 # 지역인증 완료
 @login_required
@@ -393,4 +392,52 @@ def set_region_certification(request):
         request.user.profile.region_certification = 'Y'
         request.user.profile.save()
         messages.success(request, "인증되었습니다")
-        return redirect('dangun_app:location')
+        return redirect("dangun_app:location")
+
+
+# 내 동네 설정
+def show_user_region(request):
+    user = request.user  # 현재 사용자
+    try:
+        user_region = Region.objects.get(user=user)  # 사용자의 지역 정보 가져오기
+    except Region.DoesNotExist:
+        user_region = None
+
+    return render(request, 'your_template.html', {'user_region': user_region})
+
+# 관리자메인 페이지
+def admin_main(request):
+    top_views_posts = Post.objects.filter(product_sold='N').order_by('-view_num')[:4]
+    return render(request, 'dangun_app/admin_main.html', {'posts': top_views_posts})
+
+# 유저관리 페이지
+def admin_user_list(request):
+    user_list = User.objects.all().order_by('id') # 아이디를 오름차순으로 정렬
+    return render(request, 'dangun_app/admin_user_list.html', {'user_list': user_list})
+
+def admin_user_delete(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    
+    if request.method == 'POST':
+        user.delete()
+        return redirect('dangun_app:admin_user_list')
+    
+    # GET 요청에 대한 처리 (페이지를 보여줄 때)
+    return render(request, 'dangun_app/admin_user_delete.html', {'user': user})
+
+# 유저수정
+def admin_user_modify(request, user_id):
+    if request.method == 'POST':
+        try:
+            # POST 요청을 받으면 폼에서 입력한 회원 정보를 저장합니다.
+            user = User.objects.get(pk=user_id)
+            user.set_password(request.POST['password'])  # 비밀번호 변경
+            user.username = request.POST['username']      # 이름 변경
+            # 다른 필드도 유사하게 처리하실 수 있습니다.
+            user.save()
+            return redirect('dangun_app:admin_user_list')  # 수정 후 유저 목록 페이지로 리디렉션
+        except User.DoesNotExist:
+            # 해당 ID의 회원이 존재하지 않을 경우 예외 처리
+            pass
+
+    return render(request, 'dangun_app/admin_user_modify.html', {'user': User.objects.get(pk=user_id)})

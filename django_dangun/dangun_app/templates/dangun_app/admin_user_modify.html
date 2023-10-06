@@ -7,13 +7,11 @@
 </head>
 <body>
 <h1>회원정보수정</h1>
-    <form action="AdminModPro.jsp" method="post">
-        <input type="text" name="id" value="{{ id }}" readonly><br>
-        패스워드 변경 <input type="password" name="passwd" value="{{ rs.id }}"><br>
-        이   름  변  경 <input type="text" name="name" value="{{ rs.name }}"><br>
-        이 메 일 변 경 <input type="text" name="email" value="{{ rs.email }}"><br>
-        연 락 처 변 경 <input type="text" name="phone" value="{{ rs.phone }}"><br>
-        주   소  변  경 <input type="text" name="address" value="{{ rs.address }}"><br>
+    <form action="" method="post">
+        {% csrf_token %}  <!-- CSRF 토큰 추가 -->
+        <input type="text" name="id" value="{{ user.id }}" readonly><br>
+        이   름  변  경 <input type="text" name="username" value="{{ user.username }}"><br>
+        패스워드 변경 <input type="password" name="password" value="{{ user.password }}"><br>
         <input type="submit" value="수정">
     </form>
 </body>
